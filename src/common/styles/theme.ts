@@ -4,7 +4,7 @@ import { createTheme, responsiveFontSizes, Theme } from '@mui/material';
 let theme: Theme = createTheme({
   palette: {
     primary: {
-      main: '#141414',
+      main: '#151315',
       contrastText: '#FFF',
     },
     secondary: {
@@ -20,12 +20,10 @@ let theme: Theme = createTheme({
       contrastText: '#002E36',
     },
     custom: {
-      white: '#FFF',
-      black: '#000',
       mercury: '#E4E4E4',
     },
     background: {
-      default: '#fff',
+      default: '#141414',
     },
     text: {
       primary: '#FFF',
@@ -33,7 +31,7 @@ let theme: Theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Inter', sans-serif",
     fontSize: 10,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
@@ -57,7 +55,7 @@ let theme: Theme = createTheme({
     },
     body2: {
       fontSize: '14px',
-      lineHeight: '22.4px',
+      lineHeight: '24px',
     },
   },
   breakpoints: {
@@ -66,10 +64,18 @@ let theme: Theme = createTheme({
       sm: 576,
       md: 768,
       lg: 992,
-      xl: 1200,
+      xl: 1260,
     },
   },
-  components: {},
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
+  },
 });
 
 theme = responsiveFontSizes(theme);

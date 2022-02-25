@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+# This is Knox's version of the repo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with
+[Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### First
 
-In the project directory, you can run:
+Navigate to the app2/ directory from your CLI, then run `yarn install`
 
-### `yarn start`
+This installs all the dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Navigate
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+app2/node_modules/@gemworks/gem-farm-ts/package.json
 
-### `yarn test`
+### Add this to package.json
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+"browser": {\
+ "fs": false,\
+ "path": false,\
+ "os": false\
+ },
 
-### `yarn build`
+Weirdly, the @gemworks dependency has its own dependencies which includes the
+'fs' module. Thing is, that module doesn't work in react. So we have to tell our
+browser to ignore it.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Navigate
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+app2/node_modules/@gemworks/gem-farm-ts/node_modules/@project-serum/anchor/package.json
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Add this to package.json
 
-### `yarn eject`
+"browser": {\
+ "fs": false,\
+ "path": false,\
+ "os": false\
+ },
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Same deal as before
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### NAVIGATE
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+app2/.env
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### SET FARM ID AND CREATOR ID
 
-## Learn More
+example:\
+farm_id=farmABC1233...XZY789\
+creator_id=creaABC123...XYZ789\
+creator_id2=<IF YOU USE A SECOND CANDY MACHINE, THAT FIRST CREATOR ID HERE>\
+creator_id3=<IF YOU USE A SECOND CANDY MACHINE, THAT FIRST CREATOR ID HERE>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### NAVIGATE
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+back to app2/
+
+### RUN
+
+`yarn start`

@@ -1,21 +1,24 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async';
 import theme from 'common/styles/theme';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ThemeProvider>
-  </React.StrictMode>,
+  <StrictMode>
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ThemeProvider>
+    </HelmetProvider>
+  </StrictMode>,
   document.getElementById('root'),
 );
 
