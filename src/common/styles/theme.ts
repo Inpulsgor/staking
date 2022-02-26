@@ -72,6 +72,9 @@ let theme: Theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
+          maxWidth: '320px',
+          width: '100%',
+          padding: '20px',
         },
       },
     },

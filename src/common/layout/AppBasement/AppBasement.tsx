@@ -1,36 +1,27 @@
 import { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Toolbar, Typography, Button, IconButton } from '@mui/material';
-import { ReactComponent as Logo } from 'assets/icons/diamond.svg';
-import { ROUTES } from 'types/enum';
+import { Box, Toolbar } from '@mui/material';
+import { PageContainer } from 'common/layout';
+import { Button } from 'common/components';
+import { ButtonVariant } from 'common/components/Button/Button.types';
 import styles from './AppBasement.styles';
 
 const AppBasement: FC = () => {
-  const navigate = useNavigate();
-  const handleClick = () => navigate(ROUTES.HOME);
-
   return (
     <Box sx={styles.footer} component="footer">
-      <Toolbar sx={styles.toolbar}>
-        <IconButton
-          onClick={handleClick}
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-        >
-          <Logo width="40" />
-        </IconButton>
-        <Typography sx={styles.copyright} variant="body2">
-          Diamond Hands NFT, a collaboration between Cryptonary and DC LLC. All
-          rights reserved.
-        </Typography>
-        <Button href="/" target="_blank" rel="noopener">
-          <Typography sx={styles.terms} variant="body2">
-            Terms {'&'} Conditions
-          </Typography>
-        </Button>
-      </Toolbar>
+      <PageContainer>
+        <Toolbar sx={styles.toolbar}>
+          <Button
+            title="Begin Staking"
+            color=""
+            variant={ButtonVariant.contained}
+          />
+          <Button
+            title="Claim 0 A / 0 B"
+            color=""
+            variant={ButtonVariant.contained}
+          />
+        </Toolbar>
+      </PageContainer>
     </Box>
   );
 };

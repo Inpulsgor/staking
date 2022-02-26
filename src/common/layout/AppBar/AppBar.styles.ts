@@ -8,7 +8,14 @@ const styles = {
     padding: { md: '30px' },
     justifyContent: 'center',
   },
-  icon: {},
+  link: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  linkText: {
+    ml: '16px',
+  },
 };
 
 export default styles;
