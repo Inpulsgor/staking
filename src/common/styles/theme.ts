@@ -20,14 +20,14 @@ let theme: Theme = createTheme({
       contrastText: '#002E36',
     },
     custom: {
-      mercury: '#E4E4E4',
+      mercury: '#404040',
     },
     background: {
       default: '#141414',
     },
     text: {
       primary: '#FFF',
-      secondary: '#A2A2A2',
+      secondary: '#141414',
     },
   },
   typography: {
@@ -37,8 +37,8 @@ let theme: Theme = createTheme({
     fontWeightMedium: 500,
     fontWeightBold: 600,
     h2: {
-      fontSize: '40px',
-      fontWeight: 500,
+      fontSize: '24px',
+      fontWeight: 700,
     },
     h3: {
       fontSize: '20px',
@@ -64,10 +64,13 @@ let theme: Theme = createTheme({
       sm: 576,
       md: 768,
       lg: 992,
-      xl: 1260,
+      xl: 1308,
     },
   },
   components: {
+    MuiContainer: {
+      styleOverrides: {},
+    },
     MuiButton: {
       styleOverrides: {
         root: {

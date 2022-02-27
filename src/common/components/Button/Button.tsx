@@ -7,14 +7,14 @@ const Button: FC<ButtonProps> = ({
   title,
   customStyles,
   customVariant,
-  color = 'common.white',
+  color,
 }) => {
   return (
     <MuiButton
       sx={{ ...styles.btn, ...customStyles }}
       variant={customVariant ? customVariant : ButtonVariant.contained}
     >
-      <Typography component="span" color={color}>
+      <Typography component="span" variant="body1" color={color}>
         {title}
       </Typography>
     </MuiButton>
