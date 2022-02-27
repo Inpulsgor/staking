@@ -10,7 +10,7 @@ export enum ButtonColor {
 
 export interface ButtonProps {
   title: string;
-  customStyles?: Record<string, string>;
+  customStyles?: Record<string, any>;
   customVariant: ButtonVariant;
   color: ButtonColor;
 }

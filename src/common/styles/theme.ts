@@ -32,16 +32,16 @@ let theme: Theme = createTheme({
   },
   typography: {
     fontFamily: "'Inter', sans-serif",
-    fontSize: 10,
+    fontSize: 16,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
     fontWeightBold: 600,
     h2: {
-      fontSize: '24px',
+      fontSize: '20px',
       fontWeight: 700,
     },
     h3: {
-      fontSize: '20px',
+      fontSize: '18px',
       fontWeight: 500,
       textTransform: 'none',
     },
@@ -50,12 +50,12 @@ let theme: Theme = createTheme({
       fontWeight: 500,
     },
     body1: {
-      fontSize: '16px',
-      lineHeight: '16px',
+      fontSize: '20px',
+      lineHeight: '1',
     },
     body2: {
-      fontSize: '14px',
-      lineHeight: '24px',
+      fontSize: '16px',
+      lineHeight: '1',
     },
   },
   breakpoints: {
