@@ -1,9 +1,13 @@
 const styles = {
   footer: {
+    // position: 'fixed' as const,
     display: 'flex',
     justifyContent: { xs: 'center', md: 'start' },
     bgcolor: 'custom.black',
     paddingBottom: { md: '40px' },
+    // bottom: '0',
+    // left: '0',
+    width: '100%',
   },
   toolbar: {
     height: '100%',

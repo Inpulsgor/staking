@@ -8,6 +8,8 @@ import {
   ButtonVariant,
 } from 'common/components/Button/Button.types';
 import { BorderColor } from 'common/components/InfoItem/InfoItem.types';
+import { ReactComponent as ArrowLeftIcon } from 'assets/icons/left.svg';
+import { ReactComponent as ArrowRightIcon } from 'assets/icons/right.svg';
 import account from 'common/static/account.json';
 import styles from './Home.styles';
 
@@ -21,17 +23,27 @@ const Home: FC = () => {
 
       <PageContainer>
         <Box sx={styles.wallet} component="section">
-          <Box>
-            <Typography>Your Wallet</Typography>
-            <Box></Box>
+          <Box sx={styles.walletBox}>
+            <Typography sx={styles.walletTitle} variant="body2">
+              Your Wallet
+            </Typography>
+            <Box sx={styles.walletList}></Box>
           </Box>
-          <Box>
-            <MuiButton>left</MuiButton>
-            <MuiButton>right</MuiButton>
+
+          <Box sx={styles.buttonsBox}>
+            <MuiButton sx={styles.arrowBtn}>
+              <ArrowLeftIcon />
+            </MuiButton>
+            <MuiButton sx={styles.arrowBtn}>
+              <ArrowRightIcon />
+            </MuiButton>
           </Box>
-          <Box>
-            <Typography>Your Vault</Typography>
-            <Box></Box>
+
+          <Box sx={styles.vaultBox}>
+            <Typography sx={styles.walletTitle} variant="body2">
+              Your Vault
+            </Typography>
+            <Box sx={styles.walletList}></Box>
           </Box>
         </Box>
 
