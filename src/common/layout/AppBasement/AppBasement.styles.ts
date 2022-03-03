@@ -1,13 +1,19 @@
 const styles = {
   footer: {
-    // position: 'fixed' as const,
     display: 'flex',
     justifyContent: { xs: 'center', md: 'start' },
     bgcolor: 'custom.black',
     paddingBottom: { md: '40px' },
-    // bottom: '0',
-    // left: '0',
     width: '100%',
+  },
+  footerSticky: {
+    display: 'flex',
+    position: 'sticky',
+    justifyContent: { xs: 'center', md: 'start' },
+    paddingBottom: { md: '40px' },
+    width: '100%',
+    bottom: 0,
+    bgcolor: '#000',
   },
   toolbar: {
     height: '100%',
@@ -31,6 +37,7 @@ const styles = {
   cliamgBtn: {
     background: 'linear-gradient(90deg, #FBC7D4 0%, #9796F0 100%), #4AAF47',
   },
+  walletBtn: {},
 };
 
 export default styles;

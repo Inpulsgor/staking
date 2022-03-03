@@ -1,65 +1,56 @@
 import { FC, useState, useEffect } from 'react';
-import { Box, Button as MuiButton, Typography } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import { useForm } from 'react-hook-form';
+import { Box } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Program, Provider, web3 } from '@project-serum/anchor';
-import {
-  Wallet,
-  useWallet,
-  WalletProvider,
-  ConnectionProvider,
-} from '@solana/wallet-adapter-react';
-import {
-  WalletModalProvider,
-  WalletMultiButton,
-} from '@solana/wallet-adapter-react-ui';
+import { useWallet } from '@solana/wallet-adapter-react';
+// import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import env from 'react-dotenv';
 
 import { PageContainer } from 'common/layout';
-import { InfoItem, Button } from 'common/components';
+import {
+  Button,
+  Reward,
+  Loader,
+  Account,
+  WalletFarmer,
+  NotificationPopup,
+} from 'common/components';
 import {
   ButtonColor,
   ButtonVariant,
 } from 'common/components/Button/Button.types';
-import { BorderColor } from 'common/components/InfoItem/InfoItem.types';
-import { ReactComponent as ArrowLeftIcon } from 'assets/icons/left.svg';
-import { ReactComponent as ArrowRightIcon } from 'assets/icons/right.svg';
-import account from 'common/static/account.json';
+import { AlertState } from 'common/components/NotificationPopup/NotificationPopup.types';
 import styles from './Home.styles';
 
-import { getNFTsByOwner, getNFTMetadataForMany } from 'common/utils/getNfts';
-import {
-  fetchFarn,
-  fetchFarmer,
-  stakerMover,
-  stakerMoreMover,
-} from 'common/utils/staker';
-import { populateVaultNFTs } from 'common/utils/getVaultNfts';
-import idl from 'common/static/idl.json';
-
-import { superUnstakeMover } from 'common/utils/unstaker';
-import { claim } from 'common/utils/claimer';
-require('@solana/wallet-adapter-react-ui/styles.css');
-
 // 5FoL7bx9zzTqvJDocvJRrYwzvMHXaQJwwzjbHBNrE3Kf
-
-// const wallets = [
-//   /* view list of available wallets at https://github.com/solana-labs/wallet-adapter#wallets */
-//   new PhantomWalletAdapter(),
-// ];
 
 // const opts: any = {
 //   preflightCommitment: 'processed',
 // };
+
 // const programID = new PublicKey(env.farm_id);
 
+const initialAlersState = {
+  open: false,
+  message: '',
+  severity: undefined,
+};
+
 const Home: FC = () => {
-  const [value, setValue] = useState(null);
+  const [alertState, setAlertState] = useState<AlertState>(initialAlersState);
+  const [isLoading, setIsLoading] = useState(false);
   const [farmerState, setFarmerState] = useState(null);
   const [stakedValue, setStakedValue] = useState(null);
   const [rewardValue, setRewardValue] = useState(null);
-  const wallet: any = useWallet();
+  const wallet = useWallet();
+
+  console.log('wallet', wallet.connected);
+
+  const onAlertClose = () => setAlertState(initialAlersState);
 
   // async function getProvider() {
   //   /* create the provider and return it to the caller */
@@ -164,84 +155,26 @@ const Home: FC = () => {
       </Helmet>
 
       <PageContainer>
-        <Box sx={styles.wallet} component="section">
-          <Box sx={styles.walletBox}>
-            <Typography sx={styles.walletTitle} variant="body2">
-              Your Wallet
-            </Typography>
-            <Box sx={styles.walletList}></Box>
-          </Box>
-
-          <Box sx={styles.buttonsBox}>
-            <MuiButton sx={styles.arrowBtn}>
-              <ArrowLeftIcon />
-            </MuiButton>
-            <MuiButton sx={styles.arrowBtn}>
-              <ArrowRightIcon />
-            </MuiButton>
-          </Box>
-
-          <Box sx={styles.vaultBox}>
-            <Typography sx={styles.walletTitle} variant="body2">
-              Your Vault
-            </Typography>
-            <Box sx={styles.walletList}></Box>
-          </Box>
-        </Box>
-
-        <Box sx={styles.account} component="section">
-          <Typography sx={styles.accountTitle}>
-            Your Stacking Account
-          </Typography>
-
-          <Box sx={styles.accountInfo}>
-            {account.items.map(({ label, value, id }) => (
-              <InfoItem
-                key={id}
-                label={label}
-                value={value}
-                borderColor={BorderColor.light}
-              />
-            ))}
-          </Box>
-        </Box>
+        <WalletFarmer />
+        <Account />
 
         <Box sx={styles.rewards} component="section">
-          <Box sx={styles.rewardItem}>
-            <Typography sx={styles.rewardTitle}>Reward A</Typography>
-            <Box sx={styles.rewardTable}>
-              {account.items.map(({ label, value, id }) => (
-                <InfoItem
-                  key={id}
-                  label={label}
-                  value={value}
-                  borderColor={BorderColor.dark}
-                />
-              ))}
-            </Box>
-          </Box>
-          <Box sx={styles.rewardItem}>
-            <Typography sx={styles.rewardTitle}>Reward B</Typography>
-            <Box sx={styles.rewardTable}>
-              {account.items.map(({ label, value, id }) => (
-                <InfoItem
-                  key={id}
-                  label={label}
-                  value={value}
-                  borderColor={BorderColor.dark}
-                />
-              ))}
-            </Box>
-          </Box>
+          <Reward rewardType="A" />
+          <Reward rewardType="B" />
         </Box>
 
-        <Button
-          title="Refresh Account"
-          color={ButtonColor.white}
-          customStyles={styles.refreshBtn}
-          customVariant={ButtonVariant.outlined}
-        />
+        {wallet.connected && (
+          <Button
+            title="Refresh Account"
+            color={ButtonColor.white}
+            customStyles={styles.refreshBtn}
+            customVariant={ButtonVariant.outlined}
+          />
+        )}
       </PageContainer>
+
+      <Loader isLoading={isLoading} />
+      <NotificationPopup alertState={alertState} onAlertClose={onAlertClose} />
     </>
   );
 };

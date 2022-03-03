@@ -9,8 +9,10 @@ const styles = {
   label: {
     maxWidth: '180px',
     width: '100%',
-    // marginRight: { md: '16px' },
     color: '#D0D0D0',
+  },
+  labelNonBordered: {
+    width: '100%',
   },
   value: {
     textOverflow: 'ellipsis',

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { HelmetProvider } from 'react-helmet-async';
 import theme from 'common/styles/theme';
+import { WalletsProvider } from 'common/components';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -14,7 +15,9 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <App />
+          <WalletsProvider>
+            <App />
+          </WalletsProvider>
         </BrowserRouter>
       </ThemeProvider>
     </HelmetProvider>
