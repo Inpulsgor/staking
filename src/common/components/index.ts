@@ -6,3 +6,4 @@ export { default as Reward } from './Reward/Reward';
 export { default as InfoItem } from './InfoItem/InfoItem';
 export { default as WalletsProvider } from './WalletsProvider/WalletsProvider';
 export { default as NotificationPopup } from './NotificationPopup/NotificationPopup';
+export { default as ConnectFarm } from './ConnectFarm/ConnectFarm';

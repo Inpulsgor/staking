@@ -37,7 +37,12 @@ const styles = {
   cliamgBtn: {
     background: 'linear-gradient(90deg, #FBC7D4 0%, #9796F0 100%), #4AAF47',
   },
-  walletBtn: {},
+  walletBtn: {
+    bgcolor: '#512DA8',
+    '&:hover': {
+      bgcolor: '#510DA8',
+    },
+  },
 };
 
 export default styles;
