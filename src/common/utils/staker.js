@@ -1,4 +1,3 @@
-import env from 'react-dotenv';
 import { BN } from '@project-serum/anchor';
 import { initGemFarm } from './gemfarm';
 import { initGemBank } from './gemBank';
@@ -27,19 +26,24 @@ import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
 // const vaultLocked = ref < boolean > (false);
 
 export async function fetchFarn(connection, wallet) {
-  console.log('constructing farm');
+  // console.log('constructing farm');
   console.log('received wallet ', wallet.publicKey.toBase58());
   let gf = await initGemFarm(connection, wallet);
   console.log('gf is: ', gf);
-  const farmAcc = await gf.fetchFarmAcc(new PublicKey(env.farm_id));
-  console.log(`farm found at ${env.farm_id}:`, stringifyPKsAndBNs(farmAcc));
+  const farmAcc = await gf.fetchFarmAcc(
+    new PublicKey(process.env.REACT_APP_FARM_ID),
+  );
+  console.log(
+    `farm found at ${process.env.REACT_APP_FARM_ID}:`,
+    stringifyPKsAndBNs(farmAcc),
+  );
   return farmAcc;
 }
 
 export async function fetchFarmer(connection, wallet) {
   let gf = await initGemFarm(connection, wallet);
   const [farmerPDA] = await gf.findFarmerPDA(
-    new PublicKey(env.farm_id),
+    new PublicKey(process.env.REACT_APP_FARM_ID),
     wallet.publicKey,
   );
   const farmer = {};

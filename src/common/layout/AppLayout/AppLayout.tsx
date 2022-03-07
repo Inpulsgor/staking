@@ -8,10 +8,10 @@ const AppLayout: FC = () => {
   return (
     <Box sx={styles.layout}>
       <AppBar />
-      <AppWrapper>
-        <Outlet />
-      </AppWrapper>
-      <AppBasement />
+      {/* <AppWrapper> */}
+      <Outlet />
+      {/* </AppWrapper> */}
+      {/* <AppBasement /> */}
     </Box>
   );
 };

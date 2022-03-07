@@ -81,6 +81,13 @@ let theme: Theme = createTheme({
         },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          borderColor: '#404040',
+        },
+      },
+    },
   },
 });
 

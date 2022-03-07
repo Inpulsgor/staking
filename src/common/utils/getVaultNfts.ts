@@ -1,5 +1,4 @@
 import axios from 'axios';
-import env from 'react-dotenv';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';

@@ -1,15 +1,16 @@
 import { FC, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useForm } from 'react-hook-form';
 import { Box } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 import { useWallet } from '@solana/wallet-adapter-react';
-// import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import env from 'react-dotenv';
-
+import { initGemFarm } from 'common/utils/gemfarm';
+import { INFT } from 'common/utils/getNfts';
+import { populateVaultNFTs } from 'common/utils/getVaultNfts';
+import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
+import { AppBasement, AppWrapper } from 'common/layout';
 import { PageContainer } from 'common/layout';
 import {
   Button,
@@ -22,17 +23,18 @@ import {
 import {
   ButtonColor,
   ButtonVariant,
+  ButtonType,
 } from 'common/components/Button/Button.types';
 import { AlertState } from 'common/components/NotificationPopup/NotificationPopup.types';
 import styles from './Home.styles';
 
-// 5FoL7bx9zzTqvJDocvJRrYwzvMHXaQJwwzjbHBNrE3Kf
+const opts: any = {
+  preflightCommitment: 'processed',
+};
 
-// const opts: any = {
-//   preflightCommitment: 'processed',
-// };
-
-// const programID = new PublicKey(env.farm_id);
+const NETWORK = 'https://api.devnet.solana.com';
+const FARM_ID = 'DmE1UPAFY6UioMPpNf7BY1Ngy8UnCoEj4JismBhTUPyr';
+const CONNECTION = new Connection(NETWORK, opts.preflightCommitment);
 
 const initialAlersState = {
   open: false,
@@ -42,110 +44,108 @@ const initialAlersState = {
 
 const Home: FC = () => {
   const [alertState, setAlertState] = useState<AlertState>(initialAlersState);
-  const [isLoading, setIsLoading] = useState(false);
-  const [farmerState, setFarmerState] = useState(null);
-  const [stakedValue, setStakedValue] = useState(null);
-  const [rewardValue, setRewardValue] = useState(null);
-  const wallet = useWallet();
+  const [farmAddress, setfarmAddress] = useState<string | null>(null);
+  const [farmAcc, setFarmAcc] = useState<any>(null);
 
-  console.log('wallet', wallet.connected);
+  const [farmerAcc, setFarmerAcc] = useState<any>(null);
+  const [farmerState, setFarmerState] = useState<string | null>(null);
+  const [farmerIdentity, setFarmerIdentity] = useState<string | null>(null);
+
+  const [availableA, setAvailableA] = useState<string>('');
+  const [availableB, setAvailableB] = useState<string>('');
+  const [selectedNFTs, setSelectedNFTs] = useState<INFT[]>([]);
+  const wallet = useWallet();
 
   const onAlertClose = () => setAlertState(initialAlersState);
 
-  // async function getProvider() {
-  //   /* create the provider and return it to the caller */
-  //   /* network set to local network for now */
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
+  const initFarmer = async (address: string) => {
+    if (wallet && address) {
+      const gf = await initGemFarm(CONNECTION, wallet);
 
-  //   const provider = new Provider(connection, wallet, opts.preflightCommitment);
-  //   return provider;
-  // }
+      await gf.initFarmerWallet(new PublicKey(address));
+      await fetchFarmer();
+    }
+  };
 
-  // async function claimRewards() {
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
-  //   const farm: any = await fetchFarn(connection, wallet);
-  //   const claimResults = await claim(farm, connection, wallet);
-  // }
+  const fetchFarn = async () => {
+    const gf = await initGemFarm(CONNECTION, wallet);
+    const pubKey = new PublicKey(FARM_ID);
+    const fAcc = await gf.fetchFarmAcc(pubKey);
 
-  // async function refreshAll() {
-  //   await getUnstakedNfts();
-  //   await getStakedNfts();
-  //   await getRewardA();
-  // }
+    setFarmAcc(fAcc);
+  };
 
-  // async function getRewardA() {
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
-  //   const farmerAcc: any = await fetchFarmer(connection, wallet);
-  //   const diff =
-  //     farmerAcc.farmerAcc.rewardA.accruedReward -
-  //     farmerAcc.farmerAcc.rewardA.paidOutReward;
-  //   console.log('reward amount: ', diff.toString());
-  //   const rewardA: any = diff.toString();
-  //   setRewardValue(rewardA);
-  // }
+  const fetchFarmer = async () => {
+    const gf: any = await initGemFarm(CONNECTION, wallet);
+    const [farmerPDA] = await gf.findFarmerPDA(
+      new PublicKey(FARM_ID),
+      wallet.publicKey,
+    );
 
-  // async function getUnstakedNfts() {
-  //   const provider = await getProvider();
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
+    const fIdentity = wallet?.publicKey?.toBase58();
+    const fAcc = await gf.fetchFarmerAcc(farmerPDA);
+    const fState = gf.parseFarmerState(fAcc);
 
-  //   const providerPublicKey = new PublicKey(provider.wallet.publicKey);
-  //   const nfts = await getNFTsByOwner(providerPublicKey, connection);
-  //   const nftdata: any = await getNFTMetadataForMany(nfts, connection);
-  //   // for (let nft of nfts) {
-  //   //   console.log(nft.onchainMetadata.data.name);
-  //   // }
+    console.log('fIdentity', fIdentity);
+    console.log('fAcc', fAcc);
+    console.log('fState', fState);
 
-  //   setValue(nftdata);
-  // }
+    fIdentity && setFarmerIdentity(fIdentity);
+    setFarmerAcc(fAcc);
+    setFarmerState(fState);
+    //await updateAvailableRewards();
+  };
 
-  // async function getStakedNfts() {
-  //   // console.log("viewing staked nfts")
-  //   // console.log(wallet.publicKey.toBase58())
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
+  const handleRefreshFarmer = async () => {
+    const gf = await initGemFarm(CONNECTION, wallet);
 
-  //   const farmStarted = await fetchFarn(connection, wallet);
-  //   console.log('started: ', farmStarted);
-  //   const farmerStarted: any = await fetchFarmer(connection, wallet);
-  //   console.log('started: ', farmerStarted);
-  //   const gdrs: any = await populateVaultNFTs(connection, wallet);
-  //   setFarmerState(farmerStarted.farmerState);
-  //   setStakedValue(gdrs);
-  // }
+    await gf.refreshFarmerWallet(
+      new PublicKey(farmAddress!),
+      new PublicKey(farmerIdentity!),
+    );
 
-  // async function stakeNft(nft: any) {
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
-  //   console.log('staking nft', nft.onchainMetadata.mint);
-  //   const stakeResult = await stakerMover(nft, connection, wallet);
-  //   console.log(stakeResult);
-  //   const farmerStarted: any = await fetchFarmer(connection, wallet);
-  //   setFarmerState(farmerStarted.farmerState);
-  //   await refreshAll();
-  // }
+    await fetchFarmer();
+  };
 
-  // async function stakeMoreNfts(nft: any) {
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
-  //   console.log('staking additional nft', nft.onchainMetadata.mint);
-  //   const stakeResult = await stakerMoreMover(nft, connection, wallet);
-  //   console.log(stakeResult);
-  //   const farmerStarted: any = await fetchFarmer(connection, wallet);
-  //   setFarmerState(farmerStarted.farmerState);
-  //   await refreshAll();
-  // }
+  const beginStaking = async () => {
+    const gf = await initGemFarm(CONNECTION, wallet);
 
-  // async function withdrawStake(nfts: any) {
-  //   const network = 'https://api.devnet.solana.com';
-  //   const connection = new Connection(network, opts.preflightCommitment);
-  //   const endStakeResults = await superUnstakeMover(nfts, connection, wallet);
-  //   console.log(endStakeResults);
-  //   await refreshAll();
-  // }
+    await gf.stakeWallet(new PublicKey(farmAddress!));
+    await fetchFarmer();
+
+    setSelectedNFTs([]);
+  };
+
+  useEffect(() => {
+    if (wallet.connected) {
+      setAlertState({
+        open: true,
+        message: 'Wallet connected',
+        severity: 'success',
+      });
+    }
+  }, [wallet]);
+
+  useEffect(() => {
+    const freshStart = async () => {
+      if (wallet && CONNECTION) {
+        const farmIdent = wallet?.publicKey?.toBase58();
+
+        console.log('freshStart :>> ', farmIdent);
+
+        farmIdent && setFarmerIdentity(farmIdent);
+
+        try {
+          await fetchFarn();
+          await fetchFarmer();
+        } catch (e) {
+          console.log(`farm with PK ${farmAddress} not found :(`);
+        }
+      }
+    };
+
+    freshStart();
+  }, []);
 
   return (
     <>
@@ -154,26 +154,39 @@ const Home: FC = () => {
         <meta name="description" content="Stacking" />
       </Helmet>
 
-      <PageContainer>
-        <WalletFarmer />
-        <Account />
+      <AppWrapper>
+        <PageContainer>
+          <WalletFarmer />
+          <Account farmAcc={farmAcc} farmerAcc={farmerAcc} />
 
-        <Box sx={styles.rewards} component="section">
-          <Reward rewardType="A" />
-          <Reward rewardType="B" />
-        </Box>
+          <Box sx={styles.rewards} component="section">
+            <Reward rewardType="A" />
+            <Reward rewardType="B" />
+          </Box>
 
-        {wallet.connected && (
-          <Button
-            title="Refresh Account"
-            color={ButtonColor.white}
-            customStyles={styles.refreshBtn}
-            customVariant={ButtonVariant.outlined}
-          />
-        )}
-      </PageContainer>
+          {wallet.connected && (
+            <Button
+              title="Refresh Account"
+              buttonType={ButtonType.button}
+              color={ButtonColor.white}
+              customStyles={styles.refreshBtn}
+              customVariant={ButtonVariant.outlined}
+              handleClick={handleRefreshFarmer}
+            />
+          )}
+        </PageContainer>
+      </AppWrapper>
 
-      <Loader isLoading={isLoading} />
+      <AppBasement
+        farmerAcc={farmerAcc}
+        initFarmer={initFarmer}
+        setfarmAddress={setfarmAddress}
+        beginStaking={beginStaking}
+        availableA={availableA}
+        availableB={availableB}
+      />
+
+      <Loader isLoading={wallet.connecting} />
       <NotificationPopup alertState={alertState} onAlertClose={onAlertClose} />
     </>
   );

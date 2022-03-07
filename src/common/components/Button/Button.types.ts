@@ -8,9 +8,16 @@ export enum ButtonColor {
   black = 'common.black',
 }
 
+export enum ButtonType {
+  button = 'button',
+  submit = 'submit',
+}
+
 export interface ButtonProps {
   title: string;
   customStyles?: Record<string, any>;
   customVariant: ButtonVariant;
   color: ButtonColor;
+  buttonType: ButtonType;
+  handleClick?: () => void;
 }

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import env from 'react-dotenv';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { programs } from '@metaplex/js';
@@ -14,6 +13,8 @@ export interface INFT {
 const {
   metadata: { Metadata },
 } = programs;
+
+const FARM_ID: any = process.env.REACT_APP_FARM_ID;
 
 const getTokensByOwner = async (owner: PublicKey, conn: Connection) => {
   const tokens = await conn.getParsedTokenAccountsByOwner(owner, {

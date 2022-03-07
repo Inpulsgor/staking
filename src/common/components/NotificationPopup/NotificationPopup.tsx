@@ -7,7 +7,7 @@ const NotificationPopup: FC<NotificationPopupProps> = ({
   onAlertClose,
 }) => (
   <Snackbar
-    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
     open={alertState.open}
     autoHideDuration={4000}
     onClose={onAlertClose}

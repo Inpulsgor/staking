@@ -1,3 +1,5 @@
+import { BN } from '@project-serum/anchor';
+
 export enum BorderColor {
   dark = 'dark',
   light = 'light',
@@ -11,7 +13,7 @@ interface Sub {
 
 export interface InfoItemProps {
   label: string;
-  value: string | number;
+  value: number | string | BN | undefined;
   bordered?: boolean;
   borderColor: BorderColor;
   sub?: Array<Sub> | null;
