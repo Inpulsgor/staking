@@ -62,7 +62,8 @@ const Account: FC<AccountProps> = ({ farmerAcc, farmAcc }) => {
           borderColor={BorderColor.light}
         />
         <InfoItem
-          bordered={true}
+          bordered={false}
+          sub={[]}
           label="Cooldown ends"
           value={farmerAcc && parseDate(farmerAcc?.cooldownEndsTs)}
           borderColor={BorderColor.light}

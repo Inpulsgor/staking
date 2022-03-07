@@ -1,6 +1,7 @@
 const styles = {
   footer: {
     display: 'flex',
+    position: 'sticky',
     justifyContent: { xs: 'center', md: 'start' },
     bgcolor: 'custom.black',
     paddingBottom: { md: '40px' },
@@ -10,14 +11,14 @@ const styles = {
     display: 'flex',
     position: 'sticky',
     justifyContent: { xs: 'center', md: 'start' },
-    paddingBottom: { md: '40px' },
+    paddingBottom: { md: '20px' },
     width: '100%',
     bottom: 0,
     bgcolor: '#000',
   },
   toolbar: {
     height: '100%',
-    padding: { xs: '16px', md: '48px 0 0' },
+    padding: { xs: '16px 0', md: '48px 0 0' },
     borderTop: '1px solid #404040',
   },
   copyright: {
@@ -38,6 +39,7 @@ const styles = {
     background: 'linear-gradient(90deg, #FBC7D4 0%, #9796F0 100%), #4AAF47',
   },
   walletBtn: {
+    maxWidth: { xs: '100%', md: '320px' },
     bgcolor: '#512DA8',
     '&:hover': {
       bgcolor: '#510DA8',

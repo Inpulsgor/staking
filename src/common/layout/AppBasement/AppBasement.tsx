@@ -31,6 +31,7 @@ const AppBasement: FC<AppBasementProps> = ({
           sx={styles.toolbar}
           style={{
             border: sticky ? 'none' : '',
+            paddingTop: sticky ? '20px' : '48px',
           }}
         >
           {!wallet.connected && (

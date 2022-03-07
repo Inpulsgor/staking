@@ -5,7 +5,7 @@ const styles = {
     boxShadow: 'none',
   },
   toolbar: {
-    padding: { md: '30px' },
+    padding: { xs: '30px', md: '30px' },
     justifyContent: 'center',
   },
   link: {

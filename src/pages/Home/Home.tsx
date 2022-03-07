@@ -205,16 +205,14 @@ const Home: FC = () => {
             />
           </Box>
 
-          {wallet.connected && (
-            <Button
-              title="Refresh Account"
-              buttonType={ButtonType.button}
-              color={ButtonColor.white}
-              customStyles={styles.refreshBtn}
-              customVariant={ButtonVariant.outlined}
-              handleClick={handleRefreshFarmer}
-            />
-          )}
+          <Button
+            title="Refresh Account"
+            buttonType={ButtonType.button}
+            color={ButtonColor.white}
+            customStyles={styles.refreshBtn}
+            customVariant={ButtonVariant.outlined}
+            handleClick={handleRefreshFarmer}
+          />
         </PageContainer>
       </AppWrapper>
 

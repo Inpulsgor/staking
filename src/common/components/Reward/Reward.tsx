@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BN } from '@project-serum/anchor';
 import { toBN } from '@gemworks/gem-farm-ts';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { InfoItem } from 'common/components';
 import { BorderColor } from 'common/components/InfoItem/InfoItem.types';
 import { RewardProps } from './Reward.types';
@@ -10,6 +10,8 @@ import { RewardProps } from './Reward.types';
 import styles from './Reward.styles';
 
 const Reward: FC<RewardProps> = ({ rewardType, farmReward, reward }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   // const parseRewardType = (reward: any): string => {
   //   //returns "variable" or "fixed"
   //   return Object.keys(reward.rewardType)[0];

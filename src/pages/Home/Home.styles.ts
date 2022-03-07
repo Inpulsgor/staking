@@ -13,7 +13,7 @@ const styles = {
   rewards: {
     display: 'flex',
     flexDirection: { xs: 'column', md: 'row' },
-    marginBottom: '48px',
+    marginBottom: { xs: '32px', md: '48px' },
     gap: '32px',
   },
   connectBtn: {

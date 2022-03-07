@@ -6,8 +6,10 @@ const styles = {
     width: '100%',
   },
   accountTitle: {
-    lineHeight: '20px',
-    marginBottom: { xs: '48px', md: '48px' },
+    fontSize: { xs: '24px', md: '20px' },
+    fontWeight: { xs: 500, md: 700 },
+    lineHeight: { xs: '24px', md: '20px' },
+    marginBottom: { xs: '33px', md: '48px' },
   },
   accountInfo: {},
 };

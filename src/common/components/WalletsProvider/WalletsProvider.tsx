@@ -15,7 +15,7 @@ const wallets = [
 const WalletsProvider: FC = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets}>
         <WalletDialogProvider>{children}</WalletDialogProvider>
       </WalletProvider>
     </ConnectionProvider>

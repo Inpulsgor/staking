@@ -1,8 +1,8 @@
 const styles = {
   wallet: {
     display: 'flex',
-    flexDirection: { xs: 'column', md: 'row' },
-    paddingTop: '48px',
+    flexDirection: { xs: 'row', md: 'row' },
+    paddingTop: { xs: '40px', md: '48px' },
     paddingBottm: '24px',
     marginBottom: '24px',
   },
@@ -12,6 +12,7 @@ const styles = {
     flex: '1',
   },
   walletTitle: {
+    fontSize: { xs: '14px', md: '14px' },
     mb: '16px',
   },
   walletList: {
@@ -19,7 +20,7 @@ const styles = {
     background:
       'linear-gradient(90deg, rgba(251, 199, 212, 0.04) 0%, rgba(151, 150, 240, 0.04) 100%), #191819',
     borderRadius: '8px',
-    minHeight: '120px',
+    minHeight: { xs: '200px', md: '120px' },
   },
   vaultBox: {
     display: 'flex',
@@ -28,11 +29,11 @@ const styles = {
   },
   buttonsBox: {
     display: 'flex',
-    flexDirection: { xs: 'row', md: 'column' },
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '32px',
-    marginTop: { md: '32px' },
+    width: { xs: '64px', md: '32px' },
+    marginTop: { xs: '38px', md: '32px' },
     gap: '16px',
   },
   arrowBtn: {

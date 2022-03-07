@@ -9,6 +9,7 @@ const styles = {
     padding: '32px',
   },
   rewardTitle: {
+    fontSize: '18px',
     marginBottom: '16px',
     color: '#909090',
   },
