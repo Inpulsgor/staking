@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { AppBar as AppHeading, Toolbar, Link, Typography } from '@mui/material';
 import { ReactComponent as DiamondLogo } from 'assets/icons/diamond.svg';
 import styles from './AppBar.styles';
-import external from 'common/static/external.json';
 
 const AppBar: FC = () => {
   return (

@@ -34,22 +34,19 @@ const Account: FC<AccountProps> = ({ farmerAcc, farmAcc }) => {
         <InfoItem
           bordered={true}
           label="State"
-          // value={parseFarmerState(farmerAcc)}
-          value=""
+          value={farmerAcc && parseFarmerState(farmerAcc)}
           borderColor={BorderColor.light}
         />
         <InfoItem
           bordered={true}
           label="Your identity:"
-          // value={farmerAcc?.identity?.toBase58()}
-          value=""
+          value={farmerAcc?.identity?.toBase58()}
           borderColor={BorderColor.light}
         />
         <InfoItem
           bordered={true}
           label="Associated vault:"
-          // value={farmerAcc?.vault?.toBase58()}
-          value=""
+          value={farmerAcc?.vault?.toBase58()}
           borderColor={BorderColor.light}
         />
         <InfoItem
@@ -61,15 +58,13 @@ const Account: FC<AccountProps> = ({ farmerAcc, farmAcc }) => {
         <InfoItem
           bordered={true}
           label="Minimum staking ends"
-          // value={parseDate(farmerAcc?.minStakingEndsTs)}
-          value=""
+          value={farmerAcc && parseDate(farmerAcc?.minStakingEndsTs)}
           borderColor={BorderColor.light}
         />
         <InfoItem
-          bordered={false}
+          bordered={true}
           label="Cooldown ends"
-          // value={parseDate(farmerAcc?.cooldownEndsTs)}
-          value=""
+          value={farmerAcc && parseDate(farmerAcc?.cooldownEndsTs)}
           borderColor={BorderColor.light}
         />
       </Box>

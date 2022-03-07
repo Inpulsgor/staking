@@ -93,7 +93,8 @@ const Home: FC = () => {
     fIdentity && setFarmerIdentity(fIdentity);
     setFarmerAcc(fAcc);
     setFarmerState(fState);
-    //await updateAvailableRewards();
+
+    await updateAvailableRewards();
   };
 
   const handleRefreshFarmer = async () => {
@@ -116,6 +117,40 @@ const Home: FC = () => {
     setSelectedNFTs([]);
   };
 
+  const endStaking = async () => {
+    const gf = await initGemFarm(CONNECTION, wallet);
+
+    await gf.unstakeWallet(new PublicKey(farmAddress!));
+    await fetchFarmer();
+
+    setSelectedNFTs([]);
+  };
+
+  const claim = async () => {
+    const gf = await initGemFarm(CONNECTION, wallet);
+
+    await gf.claimWallet(
+      new PublicKey(farmAddress!),
+      new PublicKey(farmAcc.value.rewardA.rewardMint!),
+      new PublicKey(farmAcc.value.rewardB.rewardMint!),
+    );
+
+    await fetchFarmer();
+  };
+
+  const updateAvailableRewards = async () => {
+    const availA = farmerAcc.value.rewardA.accruedReward
+      .sub(farmerAcc.value.rewardA.paidOutReward)
+      .toString();
+
+    const availB = farmerAcc.value.rewardB.accruedReward
+      .sub(farmerAcc.value.rewardB.paidOutReward)
+      .toString();
+
+    setAvailableA(availA);
+    setAvailableB(availB);
+  };
+
   useEffect(() => {
     if (wallet.connected) {
       setAlertState({
@@ -130,8 +165,6 @@ const Home: FC = () => {
     const freshStart = async () => {
       if (wallet && CONNECTION) {
         const farmIdent = wallet?.publicKey?.toBase58();
-
-        console.log('freshStart :>> ', farmIdent);
 
         farmIdent && setFarmerIdentity(farmIdent);
 
@@ -160,8 +193,16 @@ const Home: FC = () => {
           <Account farmAcc={farmAcc} farmerAcc={farmerAcc} />
 
           <Box sx={styles.rewards} component="section">
-            <Reward rewardType="A" />
-            <Reward rewardType="B" />
+            <Reward
+              rewardType="A"
+              farmReward={farmAcc?.rewardA}
+              reward={farmerAcc?.rewardA}
+            />
+            <Reward
+              rewardType="B"
+              farmReward={farmAcc?.rewardB}
+              reward={farmerAcc?.rewardB}
+            />
           </Box>
 
           {wallet.connected && (
