@@ -145,7 +145,7 @@ export async function depositNftsOnChain(nfts, gb, bank, vault) {
 const addSingleGem = async (gemMint, gemSource, creator, gf) => {
   console.log('flash depost: ', gemMint.toBase58());
   await gf.flashDepositWallet(
-    new PublicKey(env.farm_id),
+    new PublicKey(process.env.REACT_APP_FARM_ID),
     '1',
     gemMint,
     gemSource,
@@ -171,7 +171,9 @@ const addGems = async (selectedNFTs, gf) => {
 };
 
 export async function beginStaking(gf) {
-  const stakeResult = await gf.stakeWallet(new PublicKey(env.farm_id));
+  const stakeResult = await gf.stakeWallet(
+    new PublicKey(process.env.REACT_APP_FARM_ID),
+  );
   return stakeResult;
   // const farmerResult = await fetchFarmer();
   // return farmerResult
@@ -202,7 +204,7 @@ export async function beginStaking(gf) {
 //             await fetchFarn();
 //             await fetchFarmer(wallet);
 //         } catch (e) {
-//             console.log(`farm with PK ${env.farm_id} not found :(`);
+//             console.log(`farm with PK ${process.env.REACT_APP_FARM_ID} not found :(`);
 //         }
 //     }
 // };
@@ -225,7 +227,7 @@ export async function beginStaking(gf) {
 //     creator
 // ) => {
 //     await gf.flashDepositWallet(
-//         new PublicKey(env.farm_id),
+//         new PublicKey(process.env.REACT_APP_FARM_ID,
 //         '1',
 //         gemMint,
 //         gemSource,
