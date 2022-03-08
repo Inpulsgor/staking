@@ -1,7 +1,6 @@
 const styles = {
   item: {
     display: 'flex',
-    // flexDirection: { xs: 'column', md: 'row' },
     paddingBottom: '20px',
     marginBottom: '20px',
     gap: '16px',
@@ -28,6 +27,9 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
+  },
+  valueMobile: {
+    marginLeft: 'auto',
   },
   light: {
     borderBottom: '1px solid #404040',

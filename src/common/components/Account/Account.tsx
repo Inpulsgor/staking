@@ -4,7 +4,6 @@ import { BN } from '@project-serum/anchor';
 import { toBN } from '@gemworks/gem-farm-ts';
 import { InfoItem } from 'common/components';
 import { AccountProps } from './Account.types';
-import { initialAccount } from 'common/static/account';
 import { BorderColor } from 'common/components/InfoItem/InfoItem.types';
 import styles from './Account.styles';
 
@@ -59,21 +58,21 @@ const Account: FC<AccountProps> = ({ farmerAcc, farmAcc }) => {
         />
         <InfoItem
           bordered={true}
-          orientation={orientation}
+          orientation="horizontal"
           label="DiamondHands staked"
           value=""
           borderColor={BorderColor.light}
         />
         <InfoItem
           bordered={true}
-          orientation={orientation}
+          orientation="horizontal"
           label="Minimum staking ends"
           value={farmerAcc && parseDate(farmerAcc?.minStakingEndsTs)}
           borderColor={BorderColor.light}
         />
         <InfoItem
           bordered={false}
-          orientation={orientation}
+          orientation="horizontal"
           sub={[]}
           label="Cooldown ends"
           value={farmerAcc && parseDate(farmerAcc?.cooldownEndsTs)}

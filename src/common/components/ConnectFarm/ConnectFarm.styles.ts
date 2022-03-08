@@ -1,6 +1,7 @@
 const styles = {
   form: {
     display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
     width: '100%',
   },
   textField: {
@@ -9,8 +10,9 @@ const styles = {
     color: '#fff',
   },
   button: {
-    marginLeft: '8px',
-    maxWidth: '200px',
+    marginTop: { xs: '16px', md: '0' } as const,
+    marginLeft: { xs: '0', md: '8px' },
+    maxWidth: { xs: '100%', md: '200px' },
     background: 'linear-gradient(90deg, #FBC7D4 0%, #9796F0 100%), #4AAF47',
   },
 };

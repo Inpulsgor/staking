@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { InfoItemProps, BorderColor } from './InfoItem.types';
 import styles from './InfoItem.styles';
 
@@ -11,6 +11,9 @@ const InfoItem: FC<InfoItemProps> = ({
   borderColor = BorderColor.light,
   orientation = 'horizontal',
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const getValue = () => {
     if (value && typeof value === 'string') return value;
     if (typeof value === 'number') return value;
@@ -19,6 +22,7 @@ const InfoItem: FC<InfoItemProps> = ({
   };
 
   const borderStyles = styles[borderColor] || '';
+  const horizontalMobile = orientation === 'horizontal' && isMobile;
   const showValue = getValue();
 
   return (
@@ -26,7 +30,7 @@ const InfoItem: FC<InfoItemProps> = ({
       sx={{
         ...styles.item,
         border: bordered ? borderStyles : '',
-        paddingBottom: bordered ? '40px' : '0',
+        paddingBottom: bordered ? '20px' : '0',
         flexDirection: orientation === 'horizontal' ? 'row' : 'column',
       }}
     >
@@ -43,7 +47,10 @@ const InfoItem: FC<InfoItemProps> = ({
             {label}
           </Typography>
 
-          <Typography sx={styles.value} variant="body2">
+          <Typography
+            sx={horizontalMobile ? styles.valueMobile : styles.value}
+            variant="body2"
+          >
             {showValue}
           </Typography>
         </>

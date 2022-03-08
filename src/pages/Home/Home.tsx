@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { initGemFarm } from 'common/utils/gemfarm';
 import { INFT } from 'common/utils/getNfts';
@@ -182,6 +181,7 @@ const Home: FC = () => {
     };
 
     freshStart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
