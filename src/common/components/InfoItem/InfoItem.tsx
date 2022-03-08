@@ -9,6 +9,7 @@ const InfoItem: FC<InfoItemProps> = ({
   bordered,
   sub,
   borderColor = BorderColor.light,
+  orientation = 'horizontal',
 }) => {
   const getValue = () => {
     if (value && typeof value === 'string') return value;
@@ -25,7 +26,8 @@ const InfoItem: FC<InfoItemProps> = ({
       sx={{
         ...styles.item,
         border: bordered ? borderStyles : '',
-        paddingBottom: bordered ? '20px' : '0',
+        paddingBottom: bordered ? '40px' : '0',
+        flexDirection: orientation === 'horizontal' ? 'row' : 'column',
       }}
     >
       {!bordered && !sub ? (
@@ -37,7 +39,7 @@ const InfoItem: FC<InfoItemProps> = ({
         </Typography>
       ) : (
         <>
-          <Typography sx={styles.label} variant="body2">
+          <Typography sx={styles.labelHorizontal} variant="body2">
             {label}
           </Typography>
 

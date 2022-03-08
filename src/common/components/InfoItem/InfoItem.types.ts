@@ -17,4 +17,5 @@ export interface InfoItemProps {
   bordered?: boolean;
   borderColor: BorderColor;
   sub?: Array<Sub> | null;
+  orientation?: 'horizontal' | 'vertical';
 }

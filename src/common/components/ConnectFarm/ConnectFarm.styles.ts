@@ -2,13 +2,11 @@ const styles = {
   form: {
     display: 'flex',
     width: '100%',
-    maxWidth: '382px',
   },
   textField: {
-    // border: '1px solid #404040',
+    border: '1px solid #404040',
+    maxHeight: '56px',
     color: '#fff',
-    maxWidth: '382px',
-    width: '100%',
   },
   button: {
     marginLeft: '8px',

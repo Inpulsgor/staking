@@ -81,10 +81,10 @@ let theme: Theme = createTheme({
         },
       },
     },
-    MuiInputBase: {
+    MuiTextField: {
       styleOverrides: {
         root: {
-          borderColor: '#404040',
+          maxWidth: '382px',
         },
       },
     },

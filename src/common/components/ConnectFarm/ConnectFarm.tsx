@@ -34,7 +34,7 @@ const ConnectFarm: FC<ConnectFarmProps> = ({ setfarmAddress, initFarmer }) => {
             InputLabelProps={{
               style: {
                 fontSize: '14px',
-                lineHeight: '22px',
+                lineHeight: '24px',
                 color: '#808080',
               },
             }}

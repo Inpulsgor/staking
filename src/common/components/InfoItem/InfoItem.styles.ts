@@ -1,13 +1,20 @@
 const styles = {
   item: {
     display: 'flex',
-    flexDirection: { xs: 'column', md: 'row' },
+    // flexDirection: { xs: 'column', md: 'row' },
     paddingBottom: '20px',
     marginBottom: '20px',
     gap: '16px',
     width: '100%',
   },
-  label: {
+  labelHorizontal: {
+    fontSize: { xs: '14px', md: '16px' },
+    lineHeight: { xs: '14px', md: '16px' },
+    maxWidth: '180px',
+    width: '100%',
+    color: '#D0D0D0',
+  },
+  labelVertical: {
     fontSize: { xs: '14px', md: '16px' },
     lineHeight: { xs: '14px', md: '16px' },
     maxWidth: '180px',

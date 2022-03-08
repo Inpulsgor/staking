@@ -1,7 +1,6 @@
 const styles = {
   footer: {
     display: 'flex',
-    position: 'sticky',
     justifyContent: { xs: 'center', md: 'start' },
     bgcolor: 'custom.black',
     paddingBottom: { md: '40px' },
@@ -11,7 +10,7 @@ const styles = {
     display: 'flex',
     position: 'sticky',
     justifyContent: { xs: 'center', md: 'start' },
-    paddingBottom: { md: '20px' },
+    paddingBottom: { md: '40px' },
     width: '100%',
     bottom: 0,
     bgcolor: '#000',
@@ -20,6 +19,7 @@ const styles = {
     height: '100%',
     padding: { xs: '16px 0', md: '48px 0 0' },
     borderTop: '1px solid #404040',
+    // paddingTop: sticky ? '48px' : '48px',
   },
   copyright: {
     flexGrow: 1,

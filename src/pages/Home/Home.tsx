@@ -32,18 +32,22 @@ const opts: any = {
   preflightCommitment: 'processed',
 };
 
-const NETWORK = 'https://api.devnet.solana.com';
-const FARM_ID = 'DmE1UPAFY6UioMPpNf7BY1Ngy8UnCoEj4JismBhTUPyr';
+const NETWORK =
+  process.env.REACT_APP_NETWORK || 'https://api.devnet.solana.com';
+const FARM_ID =
+  process.env.REACT_APP_FARM_ID ||
+  'DmE1UPAFY6UioMPpNf7BY1Ngy8UnCoEj4JismBhTUPyr';
+
 const CONNECTION = new Connection(NETWORK, opts.preflightCommitment);
 
-const initialAlersState = {
+const initialAlertState = {
   open: false,
   message: '',
   severity: undefined,
 };
 
 const Home: FC = () => {
-  const [alertState, setAlertState] = useState<AlertState>(initialAlersState);
+  const [alertState, setAlertState] = useState<AlertState>(initialAlertState);
   const [farmAddress, setfarmAddress] = useState<string | null>(null);
   const [farmAcc, setFarmAcc] = useState<any>(null);
 
@@ -56,7 +60,7 @@ const Home: FC = () => {
   const [selectedNFTs, setSelectedNFTs] = useState<INFT[]>([]);
   const wallet = useWallet();
 
-  const onAlertClose = () => setAlertState(initialAlersState);
+  const onAlertClose = () => setAlertState(initialAlertState);
 
   const initFarmer = async (address: string) => {
     if (wallet && address) {
