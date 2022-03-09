@@ -3,8 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { Box } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { initGemFarm } from 'common/utils/gemfarm';
-import { INFT } from 'common/utils/getNfts';
+import { initGemFarm } from 'common/utils/gemFarm';
+import { INFT } from 'common/utils/getNFT';
 import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
 import { AppBasement, AppWrapper } from 'common/layout';
 import { PageContainer } from 'common/layout';
@@ -23,7 +23,6 @@ import {
 } from 'common/components/Button/Button.types';
 import { AlertState } from 'common/components/NotificationPopup/NotificationPopup.types';
 import styles from './Home.styles';
-import { DEFAULTS } from 'common/static/globals';
 
 const opts: any = {
   preflightCommitment: 'processed',
@@ -90,36 +89,20 @@ const Home: FC = () => {
     setFarmerState(fState);
 
     console.log('farmerAcc :>>>>>>>>>> ', farmerAcc);
-    await updateAvailableRewards();
+    // await updateAvailableRewards();
     console.log(
       `farmer found at ${farmerIdentity}:`,
       stringifyPKsAndBNs(farmerAcc),
     );
   };
 
-  const freshStart = async () => {
-    if (wallet && CONNECTION) {
-      const gf: any = await initGemFarm(CONNECTION, wallet! as any);
-      const fIdentity = wallet!.publicKey?.toBase58();
-
-      //reset stuff
-      setFarmAcc(null);
-      setFarmerAcc(null);
-      setFarmerState(null);
-      setAvailableA('');
-      setAvailableB('');
-
-      try {
-        await fetchFarn();
-        await fetchFarmer();
-      } catch (e) {
-        console.log(`farm with PK ${farm} not found :(`);
-      }
-    }
-  };
-
-  const initFarmer = async () => {
+  const initFarmer = async (farm: string) => {
+    setFarm(farm);
     const gf: any = await initGemFarm(CONNECTION, wallet! as any);
+
+    console.log('farm', farm);
+    console.log('farm!', farm!);
+    console.log('new PublicKey(farm!)!', new PublicKey(farm!));
 
     await gf.initFarmerWallet(new PublicKey(farm!));
     await fetchFarmer();
@@ -202,10 +185,32 @@ const Home: FC = () => {
   };
 
   useEffect(() => {
+    const freshStart = async () => {
+      if (wallet && CONNECTION) {
+        const gf: any = await initGemFarm(CONNECTION, wallet! as any);
+        const fIdentity = wallet!.publicKey?.toBase58();
+
+        //reset stuff
+        setFarmAcc(null);
+        setFarmerAcc(null);
+        setFarmerState(null);
+        setAvailableA('');
+        setAvailableB('');
+
+        try {
+          await fetchFarn();
+          await fetchFarmer();
+        } catch (e) {
+          console.log(`farm with PK ${farm} not found :(`);
+        }
+      }
+    };
+
     if (wallet) {
       freshStart();
     }
-  }, [wallet, freshStart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet]);
 
   return (
     <>

@@ -2,8 +2,8 @@ import * as anchor from '@project-serum/anchor';
 import { BN, Idl } from '@project-serum/anchor';
 import { GemBankClient, WhitelistType } from '@gemworks/gem-farm-ts';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { NodeWallet, programs } from '@metaplex/js';
+import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { DEFAULTS } from 'common/static/globals';
 
 //when we only want to view vaults, no need to connect a real wallet.
@@ -74,7 +74,7 @@ export class GemBank extends GemBankClient {
     // const [mintProof, bump] = await this.findWhitelistProofPDA(bank, gemMint);
     // const [creatorProof, bump2] = await this.findWhitelistProofPDA(
     //   bank,
-    //   creator,
+    //   creator
     // );
     const metadata = await programs.metadata.Metadata.getPDA(gemMint);
 
@@ -87,7 +87,7 @@ export class GemBank extends GemBankClient {
       gemSource,
       // mintProof,
       metadata,
-      // creatorProof,
+      // creatorProof
     );
   }
 

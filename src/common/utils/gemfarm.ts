@@ -1,7 +1,7 @@
-import * as anchor from '@project-serum/anchor';
-import { BN, Idl } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
+import * as anchor from '@project-serum/anchor';
+import { BN, Idl } from '@project-serum/anchor';
 import { DEFAULTS } from 'common/static/globals';
 import { createFakeWallet } from 'common/utils/gemBank';
 import {
@@ -20,6 +20,7 @@ export async function initGemFarm(
   const walletToUse = wallet ?? createFakeWallet();
   const farmIdl = await (await fetch('gem_farm.json')).json();
   const bankIdl = await (await fetch('gem_bank.json')).json();
+
   return new GemFarm(conn, walletToUse as anchor.Wallet, farmIdl, bankIdl);
 }
 
@@ -295,7 +296,7 @@ export class GemFarm extends GemFarmClient {
     // const [mintProof, bump] = await this.findWhitelistProofPDA(bank, gemMint);
     // const [creatorProof, bump2] = await this.findWhitelistProofPDA(
     //   bank,
-    //   creator,
+    //   creator
     // );
     const metadata = await programs.metadata.Metadata.getPDA(gemMint);
 
@@ -307,7 +308,7 @@ export class GemFarm extends GemFarmClient {
       gemSource,
       // mintProof,
       metadata,
-      // creatorProof,
+      // creatorProof
     );
 
     console.log('added extra gem for farmer', this.wallet.publicKey.toBase58());
