@@ -5,12 +5,24 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { initGemFarm } from 'common/utils/gemfarm';
-import { INFT } from 'common/utils/getNfts';
-import { populateVaultNFTs } from 'common/utils/getVaultNfts';
 import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
-import { AppBasement, AppWrapper } from 'common/layout';
-import { PageContainer } from 'common/layout';
+import {
+  fetchFarn,
+  fetchFarmer,
+  stakerMover,
+  stakerMoreMover,
+} from 'common/utils/staker';
+import { superUnstakeMover } from 'common/utils/unstaker';
+import { initGemFarm } from 'common/utils/gemfarm';
+import { claim } from 'common/utils/claimer';
+import {
+  INFT,
+  getNFTsByOwner,
+  getNFTMetadataForMany,
+} from 'common/utils/getNfts';
+import { populateVaultNFTs } from 'common/utils/getVaultNfts';
+import { AppBasement, AppWrapper, PageContainer } from 'common/layout';
+import { AlertState } from 'common/components/NotificationPopup/NotificationPopup.types';
 import {
   Button,
   Reward,
@@ -24,10 +36,9 @@ import {
   ButtonVariant,
   ButtonType,
 } from 'common/components/Button/Button.types';
-import { AlertState } from 'common/components/NotificationPopup/NotificationPopup.types';
 import styles from './Home.styles';
 
-const opts: any = {
+const opts: Record<string, any> = {
   preflightCommitment: 'processed',
 };
 
@@ -44,141 +55,118 @@ const initialAlertState = {
 const Home: FC = () => {
   const [alertState, setAlertState] = useState<AlertState>(initialAlertState);
   const [farmAddress, setfarmAddress] = useState<string | null>(null);
-  const [farmAcc, setFarmAcc] = useState<any>(null);
-
-  const [farmerAcc, setFarmerAcc] = useState<any>(null);
   const [farmerState, setFarmerState] = useState<string | null>(null);
-  const [farmerIdentity, setFarmerIdentity] = useState<string | null>(null);
-
-  const [availableA, setAvailableA] = useState<string>('');
-  const [availableB, setAvailableB] = useState<string>('');
-  const [selectedNFTs, setSelectedNFTs] = useState<INFT[]>([]);
+  const [stakedValue, setStakedValue] = useState<INFT[]>([]);
+  const [rewardA, setRewardA] = useState<string | null>(null);
+  const [rewardB, setRewardB] = useState<string | null>(null);
+  const [value, setValue] = useState<INFT[]>([]);
   const wallet = useWallet();
 
   const onAlertClose = () => setAlertState(initialAlertState);
 
-  const initFarmer = async (address: string) => {
-    if (wallet && address) {
-      const gf = await initGemFarm(CONNECTION, wallet);
+  const getProvider = async () => {
+    const provider = new Provider(
+      CONNECTION,
+      wallet as any,
+      opts.preflightCommitment,
+    );
 
-      await gf.initFarmerWallet(new PublicKey(address));
-      await fetchFarmer();
+    return provider;
+  };
+
+  const claimRewards = async () => {
+    const farm: any = await fetchFarn(CONNECTION, wallet);
+    const claimResults = await claim(farm, CONNECTION, wallet as any);
+
+    return claimResults;
+  };
+
+  const getRewardA = async () => {
+    const { farmerAcc } = (await fetchFarmer(CONNECTION, wallet)) as any;
+    const diff =
+      farmerAcc.rewardA.accruedReward - farmerAcc.rewardA.paidOutReward;
+
+    console.log('reward amount: ', diff.toString());
+
+    const rewardA = diff.toString();
+    setRewardA(rewardA);
+  };
+
+  const getRewardB = async () => {
+    const { farmerAcc } = (await fetchFarmer(CONNECTION, wallet)) as any;
+    const diff =
+      farmerAcc.rewardB.accruedReward - farmerAcc.rewardB.paidOutReward;
+
+    console.log('reward amount: ', diff.toString());
+
+    const rewardB = diff.toString();
+    setRewardB(rewardB);
+  };
+
+  const getUnstakedNfts = async () => {
+    const provider = await getProvider();
+    const connection = new Connection(NETWORK, opts.preflightCommitment);
+    const providerPublicKey = new PublicKey(provider.wallet.publicKey);
+    const nfts = await getNFTsByOwner(providerPublicKey, connection);
+    const nftdata = await getNFTMetadataForMany(nfts, connection);
+
+    for (let nft of nfts) {
+      console.log(nft);
+      // console.log(nft.onchainMetadata.data.name);
     }
+
+    setValue(nftdata);
   };
 
-  const fetchFarn = async () => {
-    const gf = await initGemFarm(CONNECTION, wallet);
-    const pubKey = new PublicKey(FARM_ID);
-    const fAcc = await gf.fetchFarmAcc(pubKey);
+  const getStakedNfts = async () => {
+    const farmStarted = await fetchFarn(CONNECTION, wallet);
+    console.log('started: ', farmStarted);
 
-    setFarmAcc(fAcc);
+    const farmerStarted = await fetchFarmer(CONNECTION, wallet);
+    console.log('started: ', farmerStarted);
+
+    const gdrs = await populateVaultNFTs(CONNECTION, wallet);
+
+    setFarmerState(farmerStarted.farmerState);
+    gdrs && setStakedValue(gdrs);
   };
 
-  const fetchFarmer = async () => {
-    const gf: any = await initGemFarm(CONNECTION, wallet);
-    const [farmerPDA] = await gf.findFarmerPDA(
-      new PublicKey(FARM_ID),
-      wallet.publicKey,
-    );
-
-    const fIdentity = wallet?.publicKey?.toBase58();
-    const fAcc = await gf.fetchFarmerAcc(farmerPDA);
-    const fState = gf.parseFarmerState(fAcc);
-
-    console.log('fIdentity', fIdentity);
-    console.log('fAcc', fAcc);
-    console.log('fState', fState);
-
-    fIdentity && setFarmerIdentity(fIdentity);
-    setFarmerAcc(fAcc);
-    setFarmerState(fState);
-
-    await updateAvailableRewards();
+  const refreshAll = async () => {
+    await getUnstakedNfts();
+    await getStakedNfts();
+    await getRewardA();
+    await getRewardB();
   };
 
-  const handleRefreshFarmer = async () => {
-    const gf = await initGemFarm(CONNECTION, wallet);
+  const stakeNft = async (nft: INFT) => {
+    // console.log('staking nft', nft?.onchainMetadata.mint);
 
-    await gf.refreshFarmerWallet(
-      new PublicKey(farmAddress!),
-      new PublicKey(farmerIdentity!),
-    );
+    const stakeResult = await stakerMover(nft, CONNECTION, wallet);
+    console.log('stakeResult', stakeResult);
 
-    await fetchFarmer();
+    const farmerStarted = await fetchFarmer(CONNECTION, wallet);
+    setFarmerState(farmerStarted.farmerState);
+
+    await refreshAll();
   };
 
-  const beginStaking = async () => {
-    const gf = await initGemFarm(CONNECTION, wallet);
+  const stakeMoreNfts = async (nft: INFT) => {
+    // console.log('staking additional nft', nft.onchainMetadata.mint);
+    const stakeResult = await stakerMoreMover(nft, CONNECTION, wallet);
+    console.log(stakeResult);
 
-    await gf.stakeWallet(new PublicKey(farmAddress!));
-    await fetchFarmer();
+    const farmerStarted = await fetchFarmer(CONNECTION, wallet);
+    setFarmerState(farmerStarted.farmerState);
 
-    setSelectedNFTs([]);
+    await refreshAll();
   };
 
-  const endStaking = async () => {
-    const gf = await initGemFarm(CONNECTION, wallet);
+  async function withdrawStake(nfts) {
+    const endStakeResults = await superUnstakeMover(nfts, CONNECTION, wallet);
+    console.log(endStakeResults);
 
-    await gf.unstakeWallet(new PublicKey(farmAddress!));
-    await fetchFarmer();
-
-    setSelectedNFTs([]);
-  };
-
-  const claim = async () => {
-    const gf = await initGemFarm(CONNECTION, wallet);
-
-    await gf.claimWallet(
-      new PublicKey(farmAddress!),
-      new PublicKey(farmAcc.value.rewardA.rewardMint!),
-      new PublicKey(farmAcc.value.rewardB.rewardMint!),
-    );
-
-    await fetchFarmer();
-  };
-
-  const updateAvailableRewards = async () => {
-    const availA = farmerAcc.value.rewardA.accruedReward
-      .sub(farmerAcc.value.rewardA.paidOutReward)
-      .toString();
-
-    const availB = farmerAcc.value.rewardB.accruedReward
-      .sub(farmerAcc.value.rewardB.paidOutReward)
-      .toString();
-
-    setAvailableA(availA);
-    setAvailableB(availB);
-  };
-
-  useEffect(() => {
-    if (wallet.connected) {
-      setAlertState({
-        open: true,
-        message: 'Wallet connected',
-        severity: 'success',
-      });
-    }
-  }, [wallet]);
-
-  useEffect(() => {
-    const freshStart = async () => {
-      if (wallet && CONNECTION) {
-        const farmIdent = wallet?.publicKey?.toBase58();
-
-        farmIdent && setFarmerIdentity(farmIdent);
-
-        try {
-          await fetchFarn();
-          await fetchFarmer();
-        } catch (e) {
-          console.log(`farm with PK ${farmAddress} not found :(`);
-        }
-      }
-    };
-
-    freshStart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    await refreshAll();
+  }
 
   return (
     <>

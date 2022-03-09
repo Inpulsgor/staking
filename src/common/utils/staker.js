@@ -26,35 +26,42 @@ import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
 // const vaultLocked = ref < boolean > (false);
 
 export async function fetchFarn(connection, wallet) {
-  // console.log('constructing farm');
+  console.log('constructing farm');
   console.log('received wallet ', wallet.publicKey.toBase58());
-  let gf = await initGemFarm(connection, wallet);
+
+  const gf = await initGemFarm(connection, wallet);
   console.log('gf is: ', gf);
+
   const farmAcc = await gf.fetchFarmAcc(
     new PublicKey(process.env.REACT_APP_FARM_ID),
   );
+
   console.log(
     `farm found at ${process.env.REACT_APP_FARM_ID}:`,
     stringifyPKsAndBNs(farmAcc),
   );
+
   return farmAcc;
 }
 
 export async function fetchFarmer(connection, wallet) {
-  let gf = await initGemFarm(connection, wallet);
+  const gf = await initGemFarm(connection, wallet);
   const [farmerPDA] = await gf.findFarmerPDA(
     new PublicKey(process.env.REACT_APP_FARM_ID),
     wallet.publicKey,
   );
+
   const farmer = {};
   farmer.farmerIdentity = wallet.publicKey?.toBase58();
   farmer.farmerAcc = await gf.fetchFarmerAcc(farmerPDA);
   farmer.farmerState = gf.parseFarmerState(farmer.farmerAcc);
   //await updateAvailableRewards();
+
   console.log(
     `farmer found at ${farmer.farmerIdentity}:`,
     stringifyPKsAndBNs(farmer.farmerAcc),
   );
+
   return farmer;
 }
 

@@ -10,8 +10,9 @@ export const claim = async (
   connection: Connection,
   wallet: SignerWalletAdapter,
 ) => {
-  let gf: any = await initGemFarm(connection, wallet);
+  const gf: any = await initGemFarm(connection, wallet);
   const farmAcc = await gf.fetchFarmAcc(new PublicKey(FARM_ID));
+
   await gf.claimWallet(
     new PublicKey(FARM_ID),
     new PublicKey(farmAcc.rewardA.rewardMint),

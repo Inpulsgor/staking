@@ -13,7 +13,7 @@ const {
 
 export const populateVaultNFTs = async (
   connection: Connection,
-  wallet: SignerWalletAdapter,
+  wallet: SignerWalletAdapter | any,
 ) => {
   // zero out to begin with
   let currentVaultNFTs = [];
