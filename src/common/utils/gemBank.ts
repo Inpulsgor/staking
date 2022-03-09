@@ -4,6 +4,7 @@ import { GemBankClient, WhitelistType } from '@gemworks/gem-farm-ts';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { NodeWallet, programs } from '@metaplex/js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
+const gem_bank = require('../static/gem_bank.json');
 
 //when we only want to view vaults, no need to connect a real wallet.
 export function createFakeWallet() {
@@ -24,7 +25,7 @@ export async function initGemBank(
   wallet?: SignerWalletAdapter,
 ) {
   const walletToUse = wallet ?? createFakeWallet();
-  const idl = await (await fetch('gem_bank.json')).json();
+  const idl = gem_bank;
   return new GemBank(conn, walletToUse as anchor.Wallet, idl);
 }
 

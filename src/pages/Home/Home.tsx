@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Box } from '@mui/material';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { initGemFarm } from 'common/utils/gemFarm';
 import { INFT } from 'common/utils/getNFT';
 import { stringifyPKsAndBNs } from '@gemworks/gem-farm-ts';
@@ -67,35 +68,62 @@ const Home: FC = () => {
       .sub(farmerAcc.value.rewardB.paidOutReward)
       .toString();
 
-    setAvailableA(availableA);
-    setAvailableB(availableB);
+    if (availableA) setAvailableA(availableA);
+    if (availableB) setAvailableB(availableB);
   };
+
+  // useEffect(() => {
+  //   console.log('_____________________');
+  //   console.log('farm', farm);
+  //   console.log('farmAcc', farmAcc);
+  //   console.log('farmerIdentity', farmerIdentity);
+  //   console.log('farmerAcc', farmerAcc);
+  //   console.log('farmerState', farmerState);
+  //   console.log('selectedNFTs', selectedNFTs);
+  //   console.log('availableA', availableA);
+  //   console.log('availableB', availableB);
+  //   console.log('_____________________');
+  // }, [
+  //   farm,
+  //   farmAcc,
+  //   farmerIdentity,
+  //   farmerAcc,
+  //   farmerState,
+  //   selectedNFTs,
+  //   availableA,
+  //   availableB,
+  // ]);
 
   const fetchFarn = async () => {
     const gf = await initGemFarm(CONNECTION, wallet as any);
     const pubKey = new PublicKey(FARM_ID);
     const fAcc: any = await gf.fetchFarmAcc(pubKey);
 
-    fAcc && setFarm(fAcc);
-    console.log(`farm found at ${FARM_ID}:`, stringifyPKsAndBNs(farmAcc));
+    if (fAcc) setFarm(fAcc);
+
+    console.log(`farm found at ${FARM_ID}:`, stringifyPKsAndBNs(fAcc));
   };
 
   const fetchFarmer = async () => {
     const gf: any = await initGemFarm(CONNECTION, wallet as any);
+
     const [farmerPDA] = await gf.findFarmerPDA(
       new PublicKey(FARM_ID),
       wallet.publicKey,
     );
+
     const fIdentity = wallet.publicKey?.toBase58() as any;
     const fAcc = await gf.fetchFarmerAcc(farmerPDA);
     const fState = gf.parseFarmerState(farmerAcc);
 
-    setFarmerIdentity(fIdentity);
-    setFarmerAcc(fAcc);
-    setFarmerState(fState);
+    if (fIdentity) setFarmerIdentity(fIdentity);
+    if (fAcc) setFarmerAcc(fAcc);
+    if (fState) setFarmerState(fState);
 
     console.log('farmerAcc :>>>>>>>>>> ', farmerAcc);
+
     await updateAvailableRewards();
+
     console.log(
       `farmer found at ${farmerIdentity}:`,
       stringifyPKsAndBNs(farmerAcc),
@@ -103,8 +131,9 @@ const Home: FC = () => {
   };
 
   const initFarmer = async (farm: string) => {
-    farm && setFarm(farm);
     const gf: any = await initGemFarm(CONNECTION, wallet as any);
+
+    if (farm) setFarm(farm);
 
     await gf.initFarmerWallet(new PublicKey(farm || FARM_ID));
     await fetchFarmer();
@@ -134,8 +163,8 @@ const Home: FC = () => {
 
     await gf.claimWallet(
       new PublicKey(FARM_ID),
-      new PublicKey(farmAcc.rewardA.rewardMint!),
-      new PublicKey(farmAcc.rewardB.rewardMint!),
+      new PublicKey(farmAcc.rewardA.rewardMint),
+      new PublicKey(farmAcc.rewardB.rewardMint),
     );
 
     await fetchFarmer();
@@ -188,29 +217,25 @@ const Home: FC = () => {
 
   useEffect(() => {
     const freshStart = async () => {
-      if (wallet && CONNECTION) {
-        const gf: any = await initGemFarm(CONNECTION, wallet! as any);
-        const fIdentity = wallet!.publicKey?.toBase58();
+      const gf: any = await initGemFarm(CONNECTION, wallet as any);
+      const fIdentity = wallet.publicKey?.toBase58();
 
-        //reset stuff
-        setFarmAcc(null);
-        setFarmerAcc(null);
-        setFarmerState(null);
-        setAvailableA('');
-        setAvailableB('');
+      //reset stuff
+      setFarmAcc(null);
+      setFarmerAcc(null);
+      setFarmerState(null);
+      setAvailableA('');
+      setAvailableB('');
 
-        try {
-          await fetchFarn();
-          await fetchFarmer();
-        } catch (e) {
-          console.log(`farm with PK ${farm} not found :(`);
-        }
+      try {
+        await fetchFarn();
+        await fetchFarmer();
+      } catch (e) {
+        console.log(`farm with PK ${farm} not found :(`);
       }
     };
 
-    if (wallet) {
-      freshStart();
-    }
+    if (wallet && CONNECTION) freshStart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet]);
 
