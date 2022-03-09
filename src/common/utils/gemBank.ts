@@ -4,7 +4,6 @@ import { GemBankClient, WhitelistType } from '@gemworks/gem-farm-ts';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { NodeWallet, programs } from '@metaplex/js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
-import { DEFAULTS } from 'common/static/globals';
 
 //when we only want to view vaults, no need to connect a real wallet.
 export function createFakeWallet() {
@@ -31,8 +30,10 @@ export async function initGemBank(
 
 export class GemBank extends GemBankClient {
   constructor(conn: Connection, wallet: anchor.Wallet, idl: Idl) {
-    const programId = DEFAULTS.GEM_BANK_PROG_ID;
-    super(conn, wallet, idl as any, programId);
+    const programId =
+      process.env.REACT_APP_FARM_ID ||
+      '8EV1K3kWmq2hbRtQfnBg3wbvELEorJajbyJhRGwVptwj';
+    super(conn, wallet, idl as any, programId as any);
   }
 
   async initBankWallet() {

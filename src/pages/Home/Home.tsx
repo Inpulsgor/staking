@@ -28,7 +28,13 @@ const opts: any = {
   preflightCommitment: 'processed',
 };
 
-const NETWORK: any = 'https://api.devnet.solana.com';
+const NETWORK =
+  process.env.REACT_APP_NETWORK || 'https://api.devnet.solana.com';
+
+const FARM_ID =
+  process.env.REACT_APP_FARM_ID ||
+  '8EV1K3kWmq2hbRtQfnBg3wbvELEorJajbyJhRGwVptwj';
+
 const CONNECTION = new Connection(NETWORK, opts.preflightCommitment);
 
 const initialAlertState = {
@@ -39,7 +45,7 @@ const initialAlertState = {
 
 const Home: FC = () => {
   const [alertState, setAlertState] = useState<AlertState>(initialAlertState);
-  const [farm, setFarm] = useState<string | null>(null);
+  const [farm, setFarm] = useState<string>('');
   const [farmAcc, setFarmAcc] = useState<any>(null);
 
   const [farmerIdentity, setFarmerIdentity] = useState<string | null>(null);
@@ -67,19 +73,20 @@ const Home: FC = () => {
 
   const fetchFarn = async () => {
     const gf = await initGemFarm(CONNECTION, wallet as any);
-    const fAcc: any = await gf.fetchFarmAcc(new PublicKey(farm!));
+    const pubKey = new PublicKey(FARM_ID);
+    const fAcc: any = await gf.fetchFarmAcc(pubKey);
 
-    setFarm(fAcc);
-    console.log(`farm found at ${farm}:`, stringifyPKsAndBNs(farmAcc));
+    fAcc && setFarm(fAcc);
+    console.log(`farm found at ${FARM_ID}:`, stringifyPKsAndBNs(farmAcc));
   };
 
   const fetchFarmer = async () => {
     const gf: any = await initGemFarm(CONNECTION, wallet as any);
     const [farmerPDA] = await gf.findFarmerPDA(
-      new PublicKey(farm!),
-      wallet!.publicKey,
+      new PublicKey(FARM_ID),
+      wallet.publicKey,
     );
-    const fIdentity = wallet!.publicKey?.toBase58() as any;
+    const fIdentity = wallet.publicKey?.toBase58() as any;
     const fAcc = await gf.fetchFarmerAcc(farmerPDA);
     const fState = gf.parseFarmerState(farmerAcc);
 
@@ -88,7 +95,7 @@ const Home: FC = () => {
     setFarmerState(fState);
 
     console.log('farmerAcc :>>>>>>>>>> ', farmerAcc);
-    // await updateAvailableRewards();
+    await updateAvailableRewards();
     console.log(
       `farmer found at ${farmerIdentity}:`,
       stringifyPKsAndBNs(farmerAcc),
@@ -96,18 +103,18 @@ const Home: FC = () => {
   };
 
   const initFarmer = async (farm: string) => {
-    setFarm(farm);
-    const gf: any = await initGemFarm(CONNECTION, wallet! as any);
+    farm && setFarm(farm);
+    const gf: any = await initGemFarm(CONNECTION, wallet as any);
 
-    await gf.initFarmerWallet(new PublicKey(farm!));
+    await gf.initFarmerWallet(new PublicKey(farm || FARM_ID));
     await fetchFarmer();
   };
 
   // --------------------------------------- staking
   const beginStaking = async () => {
-    const gf: any = await initGemFarm(CONNECTION, wallet! as any);
+    const gf: any = await initGemFarm(CONNECTION, wallet as any);
 
-    await gf.stakeWallet(new PublicKey(farm!));
+    await gf.stakeWallet(new PublicKey(FARM_ID));
     await fetchFarmer();
 
     setSelectedNFTs([]);
@@ -116,17 +123,17 @@ const Home: FC = () => {
   const endStaking = async () => {
     const gf: any = await initGemFarm(CONNECTION, wallet! as any);
 
-    await gf.unstakeWallet(new PublicKey(farm!));
+    await gf.unstakeWallet(new PublicKey(FARM_ID));
     await fetchFarmer();
 
     setSelectedNFTs([]);
   };
 
   const claim = async () => {
-    const gf: any = await initGemFarm(CONNECTION, wallet! as any);
+    const gf: any = await initGemFarm(CONNECTION, wallet as any);
 
     await gf.claimWallet(
-      new PublicKey(farm!),
+      new PublicKey(FARM_ID),
       new PublicKey(farmAcc.rewardA.rewardMint!),
       new PublicKey(farmAcc.rewardB.rewardMint!),
     );
@@ -154,7 +161,7 @@ const Home: FC = () => {
     const gf: any = await initGemFarm(CONNECTION, wallet! as any);
 
     await gf.flashDepositWallet(
-      new PublicKey(farm!),
+      new PublicKey(FARM_ID),
       '1',
       gemMint,
       gemSource,

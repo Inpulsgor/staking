@@ -2,7 +2,6 @@ import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import * as anchor from '@project-serum/anchor';
 import { BN, Idl } from '@project-serum/anchor';
-import { DEFAULTS } from 'common/static/globals';
 import { createFakeWallet } from 'common/utils/gemBank';
 import {
   GemFarmClient,
@@ -12,14 +11,16 @@ import {
   WhitelistType,
 } from '@gemworks/gem-farm-ts';
 import { programs } from '@metaplex/js';
+const gem_farm = require('../static/gem_farm.json');
+const gem_bank = require('../static/gem_bank.json');
 
 export async function initGemFarm(
   conn: Connection,
   wallet?: SignerWalletAdapter,
 ) {
   const walletToUse = wallet ?? createFakeWallet();
-  const farmIdl = await (await fetch('gem_farm.json')).json();
-  const bankIdl = await (await fetch('gem_bank.json')).json();
+  const farmIdl = gem_farm;
+  const bankIdl = gem_bank;
 
   return new GemFarm(conn, walletToUse as anchor.Wallet, farmIdl, bankIdl);
 }
@@ -31,9 +32,16 @@ export class GemFarm extends GemFarmClient {
     farmIdl: Idl,
     bankIdl: Idl,
   ) {
-    const farmProgId = DEFAULTS.GEM_FARM_PROG_ID;
-    const bankProgId = DEFAULTS.GEM_BANK_PROG_ID;
-    super(conn, wallet, farmIdl as any, farmProgId, bankIdl as any, bankProgId);
+    const farmProgId = 'farmL4xeBFVXJqtfxCzU9b28QACM7E2W2ctT6epAjvE';
+    const bankProgId = 'bankHHdqMuaaST4qQk6mkzxGeKPHWmqdgor6Gs8r88m';
+    super(
+      conn,
+      wallet,
+      farmIdl as any,
+      farmProgId as any,
+      bankIdl as any,
+      bankProgId as any,
+    );
   }
 
   async initFarmWallet(
