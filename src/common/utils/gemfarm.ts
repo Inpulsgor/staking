@@ -2,13 +2,14 @@ import * as anchor from '@project-serum/anchor';
 import { BN, Idl } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { WalletAdapter } from '@solana/wallet-adapter-base';
+import { programs } from '@metaplex/js';
 import {
   GemFarmClient,
   FarmConfig,
   WhitelistType,
 } from '@gemworks/gem-farm-ts';
-import { programs } from '@metaplex/js';
 import { createFakeWallet } from './gemBank';
+import { DEFAULTS } from 'common/static/globals';
 
 const gem_farm = require('common/static/gem_farm.json');
 const gem_bank = require('common/static/gem_bank.json');
@@ -33,8 +34,8 @@ export class GemFarm extends GemFarmClient {
     farmIdl: Idl,
     bankIdl: Idl,
   ) {
-    const farmProgId: any = 'farmL4xeBFVXJqtfxCzU9b28QACM7E2W2ctT6epAjvE';
-    const bankProgId: any = 'bankHHdqMuaaST4qQk6mkzxGeKPHWmqdgor6Gs8r88m';
+    const farmProgId = DEFAULTS.GEM_FARM_PROG_ID;
+    const bankProgId = DEFAULTS.GEM_BANK_PROG_ID;
 
     super(conn, wallet, farmIdl as any, farmProgId, bankIdl as any, bankProgId);
   }

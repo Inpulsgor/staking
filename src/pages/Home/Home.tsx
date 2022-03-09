@@ -31,12 +31,8 @@ const opts: any = {
   preflightCommitment: 'processed',
 };
 
-const NETWORK =
-  process.env.REACT_APP_NETWORK || 'https://api.devnet.solana.com';
-const FARM_ID =
-  process.env.REACT_APP_FARM_ID ||
-  'DmE1UPAFY6UioMPpNf7BY1Ngy8UnCoEj4JismBhTUPyr';
-
+const NETWORK: any = process.env.REACT_APP_NETWORK;
+const FARM_ID: any = process.env.REACT_APP_FARM_ID;
 const CONNECTION = new Connection(NETWORK, opts.preflightCommitment);
 
 const initialAlertState = {
