@@ -28,8 +28,7 @@ const opts: any = {
   preflightCommitment: 'processed',
 };
 
-const NETWORK: any = process.env.REACT_APP_NETWORK;
-const FARM_ID: any = process.env.REACT_APP_FARM_ID;
+const NETWORK: any = 'https://api.devnet.solana.com';
 const CONNECTION = new Connection(NETWORK, opts.preflightCommitment);
 
 const initialAlertState = {
@@ -99,10 +98,6 @@ const Home: FC = () => {
   const initFarmer = async (farm: string) => {
     setFarm(farm);
     const gf: any = await initGemFarm(CONNECTION, wallet! as any);
-
-    console.log('farm', farm);
-    console.log('farm!', farm!);
-    console.log('new PublicKey(farm!)!', new PublicKey(farm!));
 
     await gf.initFarmerWallet(new PublicKey(farm!));
     await fetchFarmer();

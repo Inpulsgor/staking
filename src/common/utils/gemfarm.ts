@@ -296,7 +296,7 @@ export class GemFarm extends GemFarmClient {
     // const [mintProof, bump] = await this.findWhitelistProofPDA(bank, gemMint);
     // const [creatorProof, bump2] = await this.findWhitelistProofPDA(
     //   bank,
-    //   creator
+    //   creator,
     // );
     const metadata = await programs.metadata.Metadata.getPDA(gemMint);
 
@@ -308,7 +308,7 @@ export class GemFarm extends GemFarmClient {
       gemSource,
       // mintProof,
       metadata,
-      // creatorProof
+      // creatorProof,
     );
 
     console.log('added extra gem for farmer', this.wallet.publicKey.toBase58());
