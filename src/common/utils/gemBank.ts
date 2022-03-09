@@ -4,12 +4,10 @@ import { GemBankClient, WhitelistType } from '@gemworks/gem-farm-ts';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { NodeWallet, programs } from '@metaplex/js';
-
-const gem_farm = require('common/static/gem_farm.json');
-const gem_bank = require('common/static/gem_bank.json');
+import { DEFAULTS } from 'common/static/globals';
 
 //when we only want to view vaults, no need to connect a real wallet.
-export const createFakeWallet = () => {
+export function createFakeWallet() {
   const leakedKp = Keypair.fromSecretKey(
     Uint8Array.from([
       208, 175, 150, 242, 88, 34, 108, 88, 177, 16, 168, 75, 115, 181, 199, 242,
@@ -18,25 +16,23 @@ export const createFakeWallet = () => {
       226, 207, 203, 188, 43, 28, 70, 110, 214, 234, 251, 15, 249, 157, 62, 80,
     ]),
   );
-
   return new NodeWallet(leakedKp);
-};
+}
 
 //need a separate func coz fetching IDL is async and can't be done in constructor
-export const initGemBank = async (
+export async function initGemBank(
   conn: Connection,
-  wallet: SignerWalletAdapter,
-) => {
-  const walletToUse: any = wallet ?? createFakeWallet();
-  const idl = gem_bank;
-
-  return new GemBank(conn, walletToUse, idl);
-};
+  wallet?: SignerWalletAdapter,
+) {
+  const walletToUse = wallet ?? createFakeWallet();
+  const idl = await (await fetch('gem_bank.json')).json();
+  return new GemBank(conn, walletToUse as anchor.Wallet, idl);
+}
 
 export class GemBank extends GemBankClient {
-  constructor(conn: Connection, wallet: anchor.Wallet, idl: any) {
-    const programId: any = 'bankHHdqMuaaST4qQk6mkzxGeKPHWmqdgor6Gs8r88m';
-    super(conn, wallet, idl, programId);
+  constructor(conn: Connection, wallet: anchor.Wallet, idl: Idl) {
+    const programId = DEFAULTS.GEM_BANK_PROG_ID;
+    super(conn, wallet, idl as any, programId);
   }
 
   async initBankWallet() {
@@ -46,7 +42,6 @@ export class GemBank extends GemBankClient {
       this.wallet.publicKey,
       this.wallet.publicKey,
     );
-
     return { bank, txSig };
   }
 
@@ -81,7 +76,6 @@ export class GemBank extends GemBankClient {
     //   bank,
     //   creator,
     // );
-
     const metadata = await programs.metadata.Metadata.getPDA(gemMint);
 
     return this.depositGem(

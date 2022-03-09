@@ -1,31 +1,27 @@
 import * as anchor from '@project-serum/anchor';
 import { BN, Idl } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { WalletAdapter } from '@solana/wallet-adapter-base';
-import { programs } from '@metaplex/js';
+import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
+import { DEFAULTS } from 'common/static/globals';
+import { createFakeWallet } from 'common/utils/gemBank';
 import {
   GemFarmClient,
   FarmConfig,
+  VariableRateConfig,
+  FixedRateConfig,
   WhitelistType,
 } from '@gemworks/gem-farm-ts';
-import { createFakeWallet } from './gemBank';
-import { DEFAULTS } from 'common/static/globals';
+import { programs } from '@metaplex/js';
 
-const gem_farm = require('common/static/gem_farm.json');
-const gem_bank = require('common/static/gem_bank.json');
-
-export const initGemFarm = async (conn: Connection, wallet: any) => {
+export async function initGemFarm(
+  conn: Connection,
+  wallet?: SignerWalletAdapter,
+) {
   const walletToUse = wallet ?? createFakeWallet();
-  // console.log(
-  //   'using wallet for gemfarm init: ',
-  //   walletToUse.publicKey.toBase58(),
-  // );
-  const farmIdl = gem_farm;
-  // console.log('farmIdl done :', farmIdl);
-  const bankIdl = gem_bank;
-  // console.log('bankIdl done: ', bankIdl);
-  return new GemFarm(conn, walletToUse as any, farmIdl, bankIdl);
-};
+  const farmIdl = await (await fetch('gem_farm.json')).json();
+  const bankIdl = await (await fetch('gem_bank.json')).json();
+  return new GemFarm(conn, walletToUse as anchor.Wallet, farmIdl, bankIdl);
+}
 
 export class GemFarm extends GemFarmClient {
   constructor(
@@ -36,7 +32,6 @@ export class GemFarm extends GemFarmClient {
   ) {
     const farmProgId = DEFAULTS.GEM_FARM_PROG_ID;
     const bankProgId = DEFAULTS.GEM_BANK_PROG_ID;
-
     super(conn, wallet, farmIdl as any, farmProgId, bankIdl as any, bankProgId);
   }
 
@@ -45,7 +40,7 @@ export class GemFarm extends GemFarmClient {
     rewardAType: any,
     rewardBMint: PublicKey,
     rewardBType: any,
-    farmConfig: any,
+    farmConfig: FarmConfig,
   ) {
     const farm = Keypair.generate();
     const bank = Keypair.generate();
@@ -70,8 +65,8 @@ export class GemFarm extends GemFarmClient {
 
   async updateFarmWallet(
     farm: PublicKey,
-    newConfig: FarmConfig,
-    newManager: PublicKey,
+    newConfig?: FarmConfig,
+    newManager?: PublicKey,
   ) {
     const result = await this.updateFarm(
       farm,
@@ -117,7 +112,7 @@ export class GemFarm extends GemFarmClient {
   ) {
     const rewardSource = await this.findATA(rewardMint, this.wallet.publicKey);
 
-    const config = {
+    const config: VariableRateConfig = {
       amount: new BN(amount),
       durationSec: new BN(duration),
     };
@@ -142,34 +137,34 @@ export class GemFarm extends GemFarmClient {
     duration: string,
     baseRate: string,
     denominator: string,
-    t1RewardRate: string,
-    t1RequiredTenure: string,
-    t2RewardRate: string,
-    t2RequiredTenure: string,
-    t3RewardRate: string,
-    t3RequiredTenure: string,
+    t1RewardRate?: string,
+    t1RequiredTenure?: string,
+    t2RewardRate?: string,
+    t2RequiredTenure?: string,
+    t3RewardRate?: string,
+    t3RequiredTenure?: string,
   ) {
     const rewardSource = await this.findATA(rewardMint, this.wallet.publicKey);
 
-    const config = {
+    const config: FixedRateConfig = {
       schedule: {
         baseRate: new BN(baseRate),
         tier1: t1RewardRate
           ? {
               rewardRate: new BN(t1RewardRate),
-              requiredTenure: new BN(t1RequiredTenure),
+              requiredTenure: new BN(t1RequiredTenure!),
             }
           : null,
         tier2: t2RewardRate
           ? {
               rewardRate: new BN(t2RewardRate),
-              requiredTenure: new BN(t2RequiredTenure),
+              requiredTenure: new BN(t2RequiredTenure!),
             }
           : null,
         tier3: t3RewardRate
           ? {
               rewardRate: new BN(t3RewardRate),
-              requiredTenure: new BN(t3RequiredTenure),
+              requiredTenure: new BN(t3RequiredTenure!),
             }
           : null,
         denominator: new BN(denominator),
@@ -303,6 +298,7 @@ export class GemFarm extends GemFarmClient {
     //   creator,
     // );
     const metadata = await programs.metadata.Metadata.getPDA(gemMint);
+
     const result = await this.flashDeposit(
       farm,
       this.wallet.publicKey,
